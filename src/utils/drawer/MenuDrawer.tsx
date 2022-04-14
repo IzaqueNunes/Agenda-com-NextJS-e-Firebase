@@ -28,9 +28,7 @@ const MenuDrawer = () => {
         border="none"
         _hover={{ backgroundColor: 'transparent' }}
       />
-      <Button colorScheme="blue" onClick={onOpen}>
-        Open
-      </Button>
+
       <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
         <DrawerContent>
