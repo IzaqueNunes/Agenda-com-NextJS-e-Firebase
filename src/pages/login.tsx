@@ -1,4 +1,5 @@
 import { EmailIcon, LockIcon } from '@chakra-ui/icons'
+import { IoLogoGithub } from 'react-icons/io'
 import {
   Button,
   Divider,
@@ -134,8 +135,9 @@ const Login: React.FC = () => {
             marginLeft={6}
             _hover={{ backgroundColor: 'purple.500' }}
             color="#fff"
+            leftIcon={<IoLogoGithub color="purple.500" />}
           >
-            Git Hub
+            GITHUB
           </Button>
         </Flex>
       </Flex>
