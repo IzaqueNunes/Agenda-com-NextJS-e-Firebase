@@ -34,8 +34,8 @@ const Login: React.FC = () => {
     >
       <Flex gridArea="logo" flexDir="column" alignItems="flex-start">
         <Image
-          src="https://cdn.pixabay.com/photo/2019/02/09/15/28/wolf-3985358__340.png"
-          alt="EventApp"
+          src="https://desencoder.com.br/wp-content/uploads/2020/03/logo-blank.svg"
+          alt="Desencoder"
           boxSize="150px"
         />
         <Heading size="2xl" color="#fff" lineHeight="shorter" marginTop={8}>
