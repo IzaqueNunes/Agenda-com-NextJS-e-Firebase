@@ -43,7 +43,7 @@ const HomePage: React.FC = () => {
       <Grid
         as="main"
         height="90vh"
-        backgroundColor="gray.100"
+        backgroundColor="#fff"
         templateColumns="1fr"
         templateRows="1fr"
         templateAreas="
