@@ -12,6 +12,7 @@ import {
   IconButton
 } from '@chakra-ui/react'
 import { HamburgerIcon } from '@chakra-ui/icons'
+import Link from 'next/link'
 
 const MenuDrawer = () => {
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -31,12 +32,18 @@ const MenuDrawer = () => {
 
       <Drawer placement="left" onClose={onClose} isOpen={isOpen}>
         <DrawerOverlay />
-        <DrawerContent>
-          <DrawerHeader borderBottomWidth="1px">Basic Drawer</DrawerHeader>
-          <DrawerBody>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
-            <p>Some contents...</p>
+        <DrawerContent backgroundColor="gray.800" color="#fff">
+          <DrawerHeader borderBottomWidth="1px">Menu</DrawerHeader>
+          <DrawerBody gap={20}>
+            <p>
+              <Link href="/home">Página inicial</Link>
+            </p>
+            <p>
+              <Link href="newEvent">Cadastrar evento</Link>
+            </p>
+            <p>
+              <Link href="/">Sair</Link>
+            </p>
           </DrawerBody>
         </DrawerContent>
       </Drawer>
