@@ -2,7 +2,7 @@ import { ArrowBackIcon } from '@chakra-ui/icons'
 import { Button, Flex, Grid, Heading } from '@chakra-ui/react'
 import React from 'react'
 import EventCard from '../components/card/EventCard/EventCard'
-import MenuDrawer from '../utils/drawer/MenuDrawer'
+import MenuDrawer from '../components/ui/drawer/MenuDrawer'
 import Link from 'next/link'
 
 const HomePage: React.FC = () => {
