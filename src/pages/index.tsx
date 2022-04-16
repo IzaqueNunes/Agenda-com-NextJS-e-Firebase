@@ -1,7 +1,10 @@
-import React from 'react'
-import LinkNext from 'next/link'
+import React, { useState } from 'react'
+import { useRouter } from 'next/router'
+import { signInWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../services/firebase'
 import { IoLogoGithub } from 'react-icons/io'
 import { EmailIcon, LockIcon } from '@chakra-ui/icons'
+
 import {
   Button,
   Divider,
@@ -13,10 +16,46 @@ import {
   InputGroup,
   InputLeftElement,
   Link,
-  Text
+  Text,
+  useToast
 } from '@chakra-ui/react'
 
 const Login: React.FC = () => {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  const router = useRouter()
+
+  const toast = useToast()
+
+  const login = () => {
+    setLoading(true)
+    signInWithEmailAndPassword(auth, email, password)
+      .then(userCredential => {
+        // Signed in
+        const user = userCredential.user
+
+        setTimeout(() => {
+          router.push('/home')
+          setLoading(false)
+        }, 3000)
+        // ...
+      })
+      .catch(error => {
+        setLoading(false)
+
+        toast({
+          position: 'top',
+          description: 'Email ou senha incorreta',
+          status: 'error',
+          duration: 3000
+        })
+        const errorCode = error.code
+        const errorMessage = error.message
+      })
+  }
+
   return (
     <Grid
       as="main"
@@ -66,6 +105,7 @@ const Login: React.FC = () => {
             color="#fff"
             type="email"
             placeholder="Email"
+            onChange={e => setEmail(e.currentTarget.value)}
           />
         </InputGroup>
 
@@ -83,6 +123,7 @@ const Login: React.FC = () => {
             type="password"
             placeholder="Senha"
             color="#fff"
+            onChange={e => setPassword(e.currentTarget.value)}
           />
         </InputGroup>
 
@@ -96,18 +137,18 @@ const Login: React.FC = () => {
         >
           Esqueci minha senha
         </Link>
-        <LinkNext href="/home">
-          <Button
-            marginTop={6}
-            backgroundColor="purple.500"
-            height="50px"
-            borderRadius="sm"
-            _hover={{ backgroundColor: 'purple.600' }}
-            color="#fff"
-          >
-            ENTRAR
-          </Button>
-        </LinkNext>
+        <Button
+          marginTop={6}
+          backgroundColor="purple.500"
+          height="50px"
+          borderRadius="sm"
+          _hover={{ backgroundColor: 'purple.600' }}
+          color="#fff"
+          onClick={login}
+          isLoading={loading}
+        >
+          ENTRAR
+        </Button>
 
         <Text textAlign="center" fontSize="sm" color="gray.300" marginTop={6}>
           Não tem uma conta?{' '}

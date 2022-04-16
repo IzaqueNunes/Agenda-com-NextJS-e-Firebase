@@ -1,11 +1,10 @@
 import React, { useState } from 'react'
-import LinkNext from 'next/link'
+import { useRouter } from 'next/router'
 import { EmailIcon, LockIcon } from '@chakra-ui/icons'
 import { createUserWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../services/firebase'
 import {
   Button,
-  Divider,
   Flex,
   Grid,
   Heading,
@@ -19,11 +18,26 @@ import {
 const Register: React.FC = () => {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const router = useRouter()
+
+  const toast = useToast()
 
   createUserWithEmailAndPassword(auth, email, password)
     .then(userCredential => {
+      setLoading(true)
       // Signed in
       const user = userCredential.user
+      toast({
+        position: 'top',
+        description: 'Cadastro efetuado com sucesso',
+        duration: 3000
+      })
+      setTimeout(() => {
+        setLoading(false)
+
+        router.push('/')
+      }, 2000)
       // ...
     })
     .catch(error => {
@@ -104,18 +118,17 @@ const Register: React.FC = () => {
           />
         </InputGroup>
 
-        <LinkNext href="/home">
-          <Button
-            marginTop={6}
-            backgroundColor="purple.500"
-            height="50px"
-            borderRadius="sm"
-            _hover={{ backgroundColor: 'purple.600' }}
-            color="#fff"
-          >
-            REGISTRAR
-          </Button>
-        </LinkNext>
+        <Button
+          marginTop={6}
+          backgroundColor="purple.500"
+          height="50px"
+          borderRadius="sm"
+          _hover={{ backgroundColor: 'purple.600' }}
+          color="#fff"
+          isLoading={loading}
+        >
+          REGISTRAR
+        </Button>
       </Flex>
     </Grid>
   )
