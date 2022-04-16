@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useState } from 'react'
 import LinkNext from 'next/link'
-import { IoLogoGithub } from 'react-icons/io'
 import { EmailIcon, LockIcon } from '@chakra-ui/icons'
+import { createUserWithEmailAndPassword } from 'firebase/auth'
+import { auth } from '../services/firebase'
 import {
   Button,
   Divider,
@@ -12,11 +13,25 @@ import {
   Input,
   InputGroup,
   InputLeftElement,
-  Link,
-  Text
+  useToast
 } from '@chakra-ui/react'
 
-const Login: React.FC = () => {
+const Register: React.FC = () => {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  createUserWithEmailAndPassword(auth, email, password)
+    .then(userCredential => {
+      // Signed in
+      const user = userCredential.user
+      // ...
+    })
+    .catch(error => {
+      const errorCode = error.code
+      const errorMessage = error.message
+      // ..
+    })
+
   return (
     <Grid
       as="main"
@@ -39,7 +54,7 @@ const Login: React.FC = () => {
           boxSize="150px"
         />
         <Heading size="2xl" color="#fff" lineHeight="shorter" marginTop={8}>
-          Faça seu login no EventApp!
+          Faça seu Registro no EventApp!
         </Heading>
       </Flex>
 
@@ -51,6 +66,7 @@ const Login: React.FC = () => {
         flexDir="column"
         alignItems="stretch"
         padding={16}
+        onSubmit={() => createUserWithEmailAndPassword}
       >
         <InputGroup>
           <InputLeftElement
@@ -66,6 +82,7 @@ const Login: React.FC = () => {
             color="#fff"
             type="email"
             placeholder="Email"
+            onChange={e => setEmail(e.currentTarget.value)}
           />
         </InputGroup>
 
@@ -83,19 +100,10 @@ const Login: React.FC = () => {
             type="password"
             placeholder="Senha"
             color="#fff"
+            onChange={e => setPassword(e.currentTarget.value)}
           />
         </InputGroup>
 
-        <Link
-          alignSelf="flex-start"
-          marginTop={2}
-          fontSize="sm"
-          color="purple.600"
-          fontWeight="bold"
-          _hover={{ color: 'purple.500' }}
-        >
-          Esqueci minha senha
-        </Link>
         <LinkNext href="/home">
           <Button
             marginTop={6}
@@ -105,47 +113,12 @@ const Login: React.FC = () => {
             _hover={{ backgroundColor: 'purple.600' }}
             color="#fff"
           >
-            ENTRAR
+            REGISTRAR
           </Button>
         </LinkNext>
-
-        <Text textAlign="center" fontSize="sm" color="gray.300" marginTop={6}>
-          Não tem uma conta?{' '}
-          <Link
-            alignSelf="flex-start"
-            marginTop={2}
-            fontSize="sm"
-            color="purple.600"
-            fontWeight="bold"
-            _hover={{ color: 'purple.500' }}
-            href="/register"
-          >
-            Registre-se
-          </Link>
-        </Text>
-
-        <Divider mt={2} />
-
-        <Flex alignItems="center" mt={4}>
-          <Text fontSize="sm" color="gray.300">
-            Ou entre com
-          </Text>
-          <Button
-            height="50px"
-            flex="1"
-            backgroundColor="gray.600"
-            borderRadius="sm"
-            marginLeft={6}
-            _hover={{ backgroundColor: 'purple.500' }}
-            color="#fff"
-            leftIcon={<IoLogoGithub color="purple.500" />}
-          >
-            GITHUB
-          </Button>
-        </Flex>
       </Flex>
     </Grid>
   )
 }
 
-export default Login
+export default Register
