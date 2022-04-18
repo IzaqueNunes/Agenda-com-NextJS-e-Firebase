@@ -1,10 +1,68 @@
+import React, { useState } from 'react'
+import { useRouter } from 'next/router'
+
+import { database, ref, set } from '../services/firebase'
 import { ArrowBackIcon } from '@chakra-ui/icons'
-import { Button, Flex, Grid, Heading, Input, Textarea } from '@chakra-ui/react'
+import { v4 as uuidv4 } from 'uuid'
+import {
+  Button,
+  Flex,
+  Grid,
+  Heading,
+  Input,
+  Textarea,
+  useToast
+} from '@chakra-ui/react'
 import Link from 'next/link'
-import React from 'react'
 import MenuDrawer from '../components/ui/drawer/MenuDrawer'
 
+interface eventData {
+  eventId: string
+  title: string
+  date: Date
+  category: string
+  local: string
+  ticket: string
+  imageUrl: string
+  description: string
+}
+
 const NewEvent: React.FC = () => {
+  const router = useRouter()
+  const toast = useToast()
+
+  const [title, setTitle] = useState('')
+  const [date, setDate] = useState('')
+  const [category, setCategory] = useState('')
+  const [local, setLocal] = useState('')
+  const [ticket, setTicket] = useState('')
+  const [description, setDescription] = useState('')
+
+  const [loading, setLoading] = useState(false)
+
+  const writeUserData = () => {
+    let eventId = uuidv4()
+    setLoading(true)
+    set(ref(database, 'events/' + eventId), {
+      title: title,
+      date: new Date(date).toLocaleDateString(),
+      category: category,
+      local: local,
+      ticket: ticket,
+      description: description
+    })
+    toast({
+      position: 'top',
+      description: 'Evento cadastrado com sucesso',
+      status: 'success',
+      duration: 3000
+    })
+    setTimeout(() => {
+      router.push('/home')
+      setLoading(false)
+    }, 3000)
+  }
+
   return (
     <Flex height="100vh" direction="column">
       <Grid
@@ -72,6 +130,7 @@ const NewEvent: React.FC = () => {
             color="#fff"
             type="text"
             placeholder="Título"
+            onChange={e => setTitle(e.currentTarget.value)}
           />
           <Input
             height="50px"
@@ -81,6 +140,7 @@ const NewEvent: React.FC = () => {
             color="#fff"
             type="date"
             placeholder="Data"
+            onChange={e => setDate(e.currentTarget.value)}
           />
           <Input
             height="50px"
@@ -90,6 +150,7 @@ const NewEvent: React.FC = () => {
             color="#fff"
             type="text"
             placeholder="Categoria"
+            onChange={e => setCategory(e.currentTarget.value)}
           />
           <Input
             height="50px"
@@ -99,6 +160,7 @@ const NewEvent: React.FC = () => {
             color="#fff"
             type="text"
             placeholder="Modalidade/Local"
+            onChange={e => setLocal(e.currentTarget.value)}
           />
           <Input
             height="50px"
@@ -108,16 +170,17 @@ const NewEvent: React.FC = () => {
             color="#fff"
             type="text"
             placeholder="Ingresso"
+            onChange={e => setTicket(e.currentTarget.value)}
           />
-          <Input
+          {/* <Input
             height="50px"
             backgroundColor="gray.800"
             focusBorderColor="purple.500"
             border="none"
             color="#fff"
-            type="file"
             placeholder="Imagem"
-          />
+            onChange={e => setImageUrl(e.currentTarget.value)}
+          /> */}
           <Textarea
             placeholder="Descrição"
             size="sm"
@@ -125,19 +188,20 @@ const NewEvent: React.FC = () => {
             focusBorderColor="purple.500"
             border="none"
             color="#fff"
+            onChange={e => setDescription(e.currentTarget.value)}
           />
-          <Link href="/home">
-            <Button
-              marginTop={6}
-              backgroundColor="purple.500"
-              height="50px"
-              borderRadius="sm"
-              _hover={{ backgroundColor: 'purple.600' }}
-              color="#fff"
-            >
-              Enviar
-            </Button>
-          </Link>
+          <Button
+            marginTop={6}
+            backgroundColor="purple.500"
+            height="50px"
+            borderRadius="sm"
+            _hover={{ backgroundColor: 'purple.600' }}
+            color="#fff"
+            isLoading={loading}
+            onClick={writeUserData}
+          >
+            Enviar
+          </Button>
         </Flex>
       </Grid>
     </Flex>
