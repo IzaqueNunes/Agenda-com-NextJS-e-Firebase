@@ -1,11 +1,54 @@
+import React, { useEffect, useState } from 'react'
 import { ArrowBackIcon } from '@chakra-ui/icons'
 import { Button, Flex, Grid, Heading } from '@chakra-ui/react'
-import React from 'react'
 import EventCard from '../components/card/EventCard/EventCard'
 import MenuDrawer from '../components/ui/drawer/MenuDrawer'
+import { database, ref, get, child } from '../services/firebase'
 import Link from 'next/link'
 
+interface Event {
+  title: string
+  category: string
+  date: string
+  description: string
+  local: string
+  ticket: string
+  imageUrl: string
+}
+
 const HomePage: React.FC = () => {
+  const [events, setEvents] = useState<Event[]>()
+
+  useEffect(() => {
+    const dbRef = ref(database)
+    get(child(dbRef, `events`))
+      .then(snapshot => {
+        if (snapshot.exists()) {
+          const resultEvents = Object.entries<Event>(snapshot.val()).map(
+            ([key, value]) => {
+              return {
+                key: key,
+                title: value.title,
+                category: value.category,
+                date: value.date,
+                description: value.description,
+                local: value.local,
+                ticket: value.ticket,
+                imageUrl: value.imageUrl
+              }
+            }
+          )
+          setEvents(resultEvents)
+          console.log('RESULTADOS: ', resultEvents)
+        } else {
+          console.log('No data available')
+        }
+      })
+      .catch(error => {
+        console.error(error)
+      })
+  }, [])
+
   return (
     <Flex height="100vh" direction="column">
       <Grid
@@ -53,68 +96,26 @@ const HomePage: React.FC = () => {
         alignItems="flex-start"
         padding="0 20px"
       >
-        <Flex gridArea="main" direction="column" paddingBottom="20px">
-          <EventCard
-            title="Latinowere"
-            imageUrl="https://latinoware.org/wp-content/uploads/2021/09/Modelo_Wallpapper2021_1024x768-A.png"
-            imageAlt="Latinowere"
-            description="Congresso Latino-Americano de Software Livre e Tecnologias Abertas, também conhecido como Latinoware, é um dos maiores eventos anuais de software livre e tecnologia aberta do mundo."
-            reviewCount={34}
-            rating={4}
-            info1="Online"
-            info2="Gratuito"
-          />
-          <EventCard
-            title="Latinowere"
-            imageUrl="https://latinoware.org/wp-content/uploads/2021/09/Modelo_Wallpapper2021_1024x768-A.png"
-            imageAlt="Latinowere"
-            description="Congresso Latino-Americano de Software Livre e Tecnologias Abertas, também conhecido como Latinoware, é um dos maiores eventos anuais de software livre e tecnologia aberta do mundo."
-            reviewCount={34}
-            rating={4}
-            info1="Online"
-            info2="Gratuito"
-          />
-          <EventCard
-            title="Latinowere"
-            imageUrl="https://latinoware.org/wp-content/uploads/2021/09/Modelo_Wallpapper2021_1024x768-A.png"
-            imageAlt="Latinowere"
-            description="Congresso Latino-Americano de Software Livre e Tecnologias Abertas, também conhecido como Latinoware, é um dos maiores eventos anuais de software livre e tecnologia aberta do mundo."
-            reviewCount={34}
-            rating={4}
-            info1="Online"
-            info2="Gratuito"
-          />
-          <EventCard
-            title="Campus Party"
-            imageUrl="https://appbrasil.org.br/wp-content/uploads/2018/01/24796593_10155729131442349_933692105969144836_n.jpg"
-            imageAlt="Latinowere"
-            description="A Campus Party Brasil é a versão brasileira da Campus Party, a maior experiência tecnológica do mundo que acontece em torno de um festival de inovação, criatividade, ciências e empreendedorismo."
-            reviewCount={34}
-            rating={4}
-            info1="Online"
-            info2="Gratuito"
-          />
-          <EventCard
-            title="Campus Party"
-            imageUrl="https://appbrasil.org.br/wp-content/uploads/2018/01/24796593_10155729131442349_933692105969144836_n.jpg"
-            imageAlt="Latinowere"
-            description="A Campus Party Brasil é a versão brasileira da Campus Party, a maior experiência tecnológica do mundo que acontece em torno de um festival de inovação, criatividade, ciências e empreendedorismo."
-            reviewCount={34}
-            rating={4}
-            info1="Online"
-            info2="Gratuito"
-          />
-          <EventCard
-            title="Campus Party"
-            imageUrl="https://appbrasil.org.br/wp-content/uploads/2018/01/24796593_10155729131442349_933692105969144836_n.jpg"
-            imageAlt="Latinowere"
-            description="A Campus Party Brasil é a versão brasileira da Campus Party, a maior experiência tecnológica do mundo que acontece em torno de um festival de inovação, criatividade, ciências e empreendedorismo."
-            reviewCount={34}
-            rating={4}
-            info1="Online"
-            info2="Gratuito"
-          />
-        </Flex>
+        {events?.length > 0 ? (
+          <Flex gridArea="main" direction="column" paddingBottom="20px">
+            {events?.map(event => (
+              <EventCard
+                title={event.title}
+                imageUrl={event.imageUrl}
+                imageAlt={event.title}
+                description={event.description}
+                reviewCount={34}
+                rating={4}
+                info1={event.date}
+                info2={event.local}
+              />
+            ))}
+          </Flex>
+        ) : (
+          <Heading alignSelf="center" justifySelf="center">
+            Sem eventos cadastrados
+          </Heading>
+        )}
       </Grid>
     </Flex>
   )

@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useRouter } from 'next/router'
 
 import {
   database,
@@ -7,7 +6,9 @@ import {
   set,
   storage,
   refStorage,
-  uploadBytes
+  uploadBytes,
+  getDownloadURL,
+  uploadBytesResumable
 } from '../services/firebase'
 import { ArrowBackIcon } from '@chakra-ui/icons'
 import { v4 as uuidv4 } from 'uuid'
@@ -24,7 +25,6 @@ import Link from 'next/link'
 import MenuDrawer from '../components/ui/drawer/MenuDrawer'
 
 const NewEvent: React.FC = () => {
-  const router = useRouter()
   const toast = useToast()
 
   const [title, setTitle] = useState('')
@@ -42,19 +42,21 @@ const NewEvent: React.FC = () => {
     setLoading(true)
 
     const storageRefPath = refStorage(storage, `/files/${image.name}`)
-    let path = storageRefPath.fullPath
 
     uploadBytes(storageRefPath, image).then(snapshot => {
+      getDownloadURL(storageRefPath).then(downloadURL => {
+        set(ref(database, 'events/' + eventId), {
+          title: title,
+          date: new Date(date).toLocaleDateString(),
+          category: category,
+          local: local,
+          ticket: ticket,
+          description: description,
+          imageUrl: downloadURL
+        })
+        console.log('URL: ', downloadURL)
+      })
       console.log('Uploaded a blob or file!')
-    })
-    set(ref(database, 'events/' + eventId), {
-      title: title,
-      date: new Date(date).toLocaleDateString(),
-      category: category,
-      local: local,
-      ticket: ticket,
-      description: description,
-      imageUrl: path
     })
     toast({
       position: 'top',
@@ -63,7 +65,6 @@ const NewEvent: React.FC = () => {
       duration: 3000
     })
     setTimeout(() => {
-      router.push('/home')
       setLoading(false)
     }, 3000)
   }
@@ -194,7 +195,7 @@ const NewEvent: React.FC = () => {
             focusBorderColor="purple.500"
             border="none"
             color="#fff"
-            onChange={e => setDescription(e.currentTarget.value[0])}
+            onChange={e => setDescription(e.currentTarget.value)}
           />
           <Button
             marginTop={6}
