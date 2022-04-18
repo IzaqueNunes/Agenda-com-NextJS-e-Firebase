@@ -6,7 +6,7 @@ import {
   ref,
   set,
   storage,
-  storageRef,
+  refStorage,
   uploadBytes
 } from '../services/firebase'
 import { ArrowBackIcon } from '@chakra-ui/icons'
@@ -37,21 +37,24 @@ const NewEvent: React.FC = () => {
 
   const [loading, setLoading] = useState(false)
 
-  const storageRefPath = storageRef(storage, `/files/${image}`)
-
   const writeUserData = () => {
     let eventId = uuidv4()
     setLoading(true)
+
+    const storageRefPath = refStorage(storage, `/files/${image.name}`)
+    let path = storageRefPath.fullPath
+
+    uploadBytes(storageRefPath, image).then(snapshot => {
+      console.log('Uploaded a blob or file!')
+    })
     set(ref(database, 'events/' + eventId), {
       title: title,
       date: new Date(date).toLocaleDateString(),
       category: category,
       local: local,
       ticket: ticket,
-      description: description
-    })
-    uploadBytes(storageRefPath, image).then(snapshot => {
-      console.log('Uploaded a blob or file!')
+      description: description,
+      imageUrl: path
     })
     toast({
       position: 'top',
@@ -191,7 +194,7 @@ const NewEvent: React.FC = () => {
             focusBorderColor="purple.500"
             border="none"
             color="#fff"
-            onChange={e => setDescription(e.currentTarget.value)}
+            onChange={e => setDescription(e.currentTarget.value[0])}
           />
           <Button
             marginTop={6}
