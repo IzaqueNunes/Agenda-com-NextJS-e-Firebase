@@ -1,7 +1,14 @@
 import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 
-import { database, ref, set } from '../services/firebase'
+import {
+  database,
+  ref,
+  set,
+  storage,
+  storageRef,
+  uploadBytes
+} from '../services/firebase'
 import { ArrowBackIcon } from '@chakra-ui/icons'
 import { v4 as uuidv4 } from 'uuid'
 import {
@@ -16,17 +23,6 @@ import {
 import Link from 'next/link'
 import MenuDrawer from '../components/ui/drawer/MenuDrawer'
 
-interface eventData {
-  eventId: string
-  title: string
-  date: Date
-  category: string
-  local: string
-  ticket: string
-  imageUrl: string
-  description: string
-}
-
 const NewEvent: React.FC = () => {
   const router = useRouter()
   const toast = useToast()
@@ -36,9 +32,12 @@ const NewEvent: React.FC = () => {
   const [category, setCategory] = useState('')
   const [local, setLocal] = useState('')
   const [ticket, setTicket] = useState('')
+  const [image, setImage] = useState(null)
   const [description, setDescription] = useState('')
 
   const [loading, setLoading] = useState(false)
+
+  const storageRefPath = storageRef(storage, `/files/${image}`)
 
   const writeUserData = () => {
     let eventId = uuidv4()
@@ -50,6 +49,9 @@ const NewEvent: React.FC = () => {
       local: local,
       ticket: ticket,
       description: description
+    })
+    uploadBytes(storageRefPath, image).then(snapshot => {
+      console.log('Uploaded a blob or file!')
     })
     toast({
       position: 'top',
@@ -172,15 +174,16 @@ const NewEvent: React.FC = () => {
             placeholder="Ingresso"
             onChange={e => setTicket(e.currentTarget.value)}
           />
-          {/* <Input
+          <Input
             height="50px"
             backgroundColor="gray.800"
             focusBorderColor="purple.500"
             border="none"
             color="#fff"
             placeholder="Imagem"
-            onChange={e => setImageUrl(e.currentTarget.value)}
-          /> */}
+            type="file"
+            onChange={e => setImage(e.currentTarget.files[0])}
+          />
           <Textarea
             placeholder="Descrição"
             size="sm"
