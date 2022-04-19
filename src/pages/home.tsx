@@ -95,6 +95,7 @@ const HomePage = () => {
             })
             setTimeout(() => {
               onClose()
+              location.reload()
               setLoading(false)
             }, 3000)
           })

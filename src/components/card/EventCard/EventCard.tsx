@@ -27,7 +27,7 @@ const EventCard: React.FC<EventCardProps> = props => {
     >
       <Grid
         as="main"
-        templateColumns="300px 1fr"
+        templateColumns="400px 1fr"
         templateRows="200px"
         templateAreas="
           'image description'

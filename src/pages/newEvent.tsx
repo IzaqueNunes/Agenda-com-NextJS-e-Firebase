@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useRouter } from 'next/router'
 
 import {
   database,
@@ -26,6 +27,8 @@ import MenuDrawer from '../components/ui/drawer/MenuDrawer'
 
 const NewEvent: React.FC = () => {
   const toast = useToast()
+
+  const router = useRouter()
 
   const [title, setTitle] = useState('')
   const [date, setDate] = useState('')
@@ -66,6 +69,7 @@ const NewEvent: React.FC = () => {
     })
     setTimeout(() => {
       setLoading(false)
+      router.push('/')
     }, 3000)
   }
 
