@@ -200,9 +200,9 @@ const NewEvent: React.FC = () => {
           <Button
             marginTop={6}
             backgroundColor="purple.500"
+            _hover={{ backgroundColor: 'purple.600' }}
             height="50px"
             borderRadius="sm"
-            _hover={{ backgroundColor: 'purple.600' }}
             color="#fff"
             isLoading={loading}
             onClick={writeUserData}

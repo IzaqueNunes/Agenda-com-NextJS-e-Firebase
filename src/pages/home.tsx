@@ -1,26 +1,62 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { ArrowBackIcon } from '@chakra-ui/icons'
-import { Button, Flex, Grid, Heading, useToast } from '@chakra-ui/react'
+import { FormHandles } from '@unform/core'
+
+import {
+  Button,
+  Editable,
+  EditableInput,
+  EditablePreview,
+  Flex,
+  Grid,
+  Heading,
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  useDisclosure,
+  useToast
+} from '@chakra-ui/react'
 import EventCard from '../components/card/EventCard/EventCard'
 import MenuDrawer from '../components/ui/drawer/MenuDrawer'
-import { database, ref, get, child, remove } from '../services/firebase'
+import { database, ref, get, child, remove, update } from '../services/firebase'
 import Link from 'next/link'
 
-interface Event {
-  key: string
-  title: string
-  category: string
-  date: string
-  description: string
-  local: string
-  ticket: string
-  imageUrl: string
-}
+import { TEvent } from '../types/TEvent'
 
 const HomePage: React.FC = () => {
-  const [events, setEvents] = useState<Event[]>()
+  const [events, setEvents] = useState<TEvent[]>()
+  const { isOpen, onOpen, onClose } = useDisclosure()
+
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
+  const [local, setLocal] = useState('')
+  const [ticket, setTicket] = useState('')
+  const [category, setCategory] = useState('')
+  const [date, setDate] = useState('')
+
+  const updateRef = useRef<FormHandles>(null)
+
+  const [id, setId] = useState('')
 
   const toast = useToast()
+
+  // FINDING DATA TO UPDATE
+  const updateFill = (item: TEvent) => {
+    setTitle(item.title)
+    setDescription(item.description)
+    setLocal(item.local)
+    setTicket(item.ticket)
+    setCategory(item.category)
+    setDate(item.date)
+    setId(item.key)
+    onOpen()
+  }
+
+  // UPDATE DATA
 
   // DELETE DATA
   const handleDelete = (refToDelete: string) => {
@@ -50,7 +86,7 @@ const HomePage: React.FC = () => {
     get(child(dbRef, `events`))
       .then(snapshot => {
         if (snapshot.exists()) {
-          const resultEvents = Object.entries<Event>(snapshot.val()).map(
+          const resultEvents = Object.entries<TEvent>(snapshot.val()).map(
             ([key, value]) => {
               return {
                 key: key,
@@ -123,18 +159,19 @@ const HomePage: React.FC = () => {
       >
         {events?.length > 0 ? (
           <Flex gridArea="main" direction="column" paddingBottom="20px">
-            {events?.map(event => (
+            {events?.map((item, index) => (
               <EventCard
-                key={event.key}
-                title={event.title}
-                imageUrl={event.imageUrl}
-                imageAlt={event.title}
-                description={event.description}
+                key={index}
+                title={item.title}
+                imageUrl={item.imageUrl}
+                imageAlt={item.title}
+                description={item.description}
                 reviewCount={34}
                 rating={4}
-                info1={event.date}
-                info2={event.local}
-                onClickDelete={() => handleDelete(event.key)}
+                info1={item.date}
+                info2={item.local}
+                onClickDelete={() => handleDelete(item.key)}
+                onClickUpdate={() => updateFill(item)}
               />
             ))}
           </Flex>
@@ -144,6 +181,53 @@ const HomePage: React.FC = () => {
           </Heading>
         )}
       </Grid>
+
+      <Modal isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent backgroundColor="gray.800">
+          <ModalHeader color="gray.100">Editar evento</ModalHeader>
+          <ModalCloseButton color="gray.100" />
+
+          <ModalBody display="flex" pb={6} flexDirection="column" gap={5}>
+            <Editable defaultValue={title} color="#fff">
+              <EditablePreview />
+              <EditableInput height="50px" />
+            </Editable>
+            <Editable defaultValue={description} color="#fff">
+              <EditablePreview />
+              <EditableInput height="50px" />
+            </Editable>
+            <Editable defaultValue={local} color="#fff">
+              <EditablePreview />
+              <EditableInput height="50px" />
+            </Editable>
+            <Editable defaultValue={ticket} color="#fff">
+              <EditablePreview />
+              <EditableInput height="50px" />
+            </Editable>
+            <Editable defaultValue={date} color="#fff">
+              <EditablePreview />
+              <EditableInput height="50px" />
+            </Editable>
+            <Editable defaultValue={category} color="#fff">
+              <EditablePreview />
+              <EditableInput height="50px" />
+            </Editable>
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              backgroundColor="purple.500"
+              _hover={{ backgroundColor: 'purple.600' }}
+              color="#fff"
+              mr={3}
+              type="submit"
+            >
+              Salvar
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </Flex>
   )
 }

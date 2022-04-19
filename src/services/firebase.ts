@@ -1,5 +1,13 @@
 import { initializeApp } from 'firebase/app'
-import { getDatabase, ref, set, get, child, remove } from 'firebase/database'
+import {
+  getDatabase,
+  ref,
+  set,
+  get,
+  child,
+  remove,
+  update
+} from 'firebase/database'
 import { getAuth } from 'firebase/auth'
 import {
   getStorage,
@@ -35,5 +43,6 @@ export {
   uploadBytesResumable,
   get,
   child,
-  remove
+  remove,
+  update
 }
