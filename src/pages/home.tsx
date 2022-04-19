@@ -10,6 +10,8 @@ import {
   Flex,
   Grid,
   Heading,
+  Img,
+  Input,
   Modal,
   ModalBody,
   ModalCloseButton,
@@ -22,7 +24,18 @@ import {
 } from '@chakra-ui/react'
 import EventCard from '../components/card/EventCard/EventCard'
 import MenuDrawer from '../components/ui/drawer/MenuDrawer'
-import { database, ref, get, child, remove, update } from '../services/firebase'
+import {
+  database,
+  ref,
+  get,
+  child,
+  remove,
+  update,
+  refStorage,
+  storage,
+  uploadBytes,
+  getDownloadURL
+} from '../services/firebase'
 import Link from 'next/link'
 
 import { TEvent } from '../types/TEvent'
@@ -30,15 +43,15 @@ import { TEvent } from '../types/TEvent'
 const HomePage: React.FC = () => {
   const [events, setEvents] = useState<TEvent[]>()
   const { isOpen, onOpen, onClose } = useDisclosure()
-
+  const [loading, setLoading] = useState(false)
   const [title, setTitle] = useState('')
+  const [imageUrl, setImageUrl] = useState('')
+  const [image, setImage] = useState(null)
   const [description, setDescription] = useState('')
   const [local, setLocal] = useState('')
   const [ticket, setTicket] = useState('')
   const [category, setCategory] = useState('')
   const [date, setDate] = useState('')
-
-  const updateRef = useRef<FormHandles>(null)
 
   const [id, setId] = useState('')
 
@@ -52,11 +65,52 @@ const HomePage: React.FC = () => {
     setTicket(item.ticket)
     setCategory(item.category)
     setDate(item.date)
+    setImageUrl(item.imageUrl)
     setId(item.key)
     onOpen()
   }
 
   // UPDATE DATA
+  const handleUpdate = () => {
+    const storageRefPath = refStorage(storage, `/files/${image.name}`)
+    uploadBytes(storageRefPath, image).then(snapshot => {
+      getDownloadURL(storageRefPath).then(downloadURL => {
+        setImageUrl(downloadURL)
+        const dados = {
+          category: category,
+          date: date,
+          description: description,
+          local: local,
+          ticket: ticket,
+          title: title,
+          imageUrl: downloadURL
+        }
+        return update(ref(database, 'events/' + id), dados)
+          .then(() => {
+            setLoading(true)
+            toast({
+              position: 'top',
+              description: 'Evento atualizado com sucesso',
+              status: 'success',
+              duration: 3000
+            })
+            setTimeout(() => {
+              onClose()
+              setLoading(false)
+            }, 3000)
+          })
+          .catch(error => {
+            toast({
+              position: 'top',
+              description: error.message,
+              status: 'error',
+              duration: 3000
+            })
+          })
+      })
+      console.log('Uploaded a blob or file!')
+    })
+  }
 
   // DELETE DATA
   const handleDelete = (refToDelete: string) => {
@@ -189,29 +243,58 @@ const HomePage: React.FC = () => {
           <ModalCloseButton color="gray.100" />
 
           <ModalBody display="flex" pb={6} flexDirection="column" gap={5}>
+            <Img src={imageUrl} />
+            <Input
+              height="50px"
+              backgroundColor="gray.800"
+              focusBorderColor="purple.500"
+              border="none"
+              color="#fff"
+              placeholder="Imagem"
+              type="file"
+              onChange={e => setImage(e.currentTarget.files[0])}
+            />
             <Editable defaultValue={title} color="#fff">
               <EditablePreview />
-              <EditableInput height="50px" />
+              <EditableInput
+                height="50px"
+                onChange={e => setTitle(e.currentTarget.value)}
+              />
             </Editable>
             <Editable defaultValue={description} color="#fff">
               <EditablePreview />
-              <EditableInput height="50px" />
+              <EditableInput
+                height="50px"
+                onChange={e => setDescription(e.currentTarget.value)}
+              />
             </Editable>
             <Editable defaultValue={local} color="#fff">
               <EditablePreview />
-              <EditableInput height="50px" />
+              <EditableInput
+                height="50px"
+                onChange={e => setLocal(e.currentTarget.value)}
+              />
             </Editable>
             <Editable defaultValue={ticket} color="#fff">
               <EditablePreview />
-              <EditableInput height="50px" />
+              <EditableInput
+                height="50px"
+                onChange={e => setTicket(e.currentTarget.value)}
+              />
             </Editable>
             <Editable defaultValue={date} color="#fff">
               <EditablePreview />
-              <EditableInput height="50px" />
+              <EditableInput
+                height="50px"
+                onChange={e => setDate(e.currentTarget.value)}
+              />
             </Editable>
             <Editable defaultValue={category} color="#fff">
               <EditablePreview />
-              <EditableInput height="50px" />
+              <EditableInput
+                height="50px"
+                onChange={e => setCategory(e.currentTarget.value)}
+              />
             </Editable>
           </ModalBody>
 
@@ -221,7 +304,8 @@ const HomePage: React.FC = () => {
               _hover={{ backgroundColor: 'purple.600' }}
               color="#fff"
               mr={3}
-              type="submit"
+              onClick={handleUpdate}
+              isLoading={loading}
             >
               Salvar
             </Button>
