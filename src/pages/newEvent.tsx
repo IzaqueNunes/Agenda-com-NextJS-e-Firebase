@@ -69,7 +69,7 @@ const NewEvent: React.FC = () => {
     })
     setTimeout(() => {
       setLoading(false)
-      router.push('/')
+      router.push('/home')
     }, 3000)
   }
 
