@@ -71,55 +71,47 @@ const NewEvent: React.FC = () => {
 
   return (
     <Flex height="100vh" direction="column">
-      <Grid
-        as="head"
+      <Flex
+        gridArea="menu"
+        display="flex"
+        width="100%"
         height="10vh"
-        backgroundColor="gray.800"
-        templateColumns="500px 70px"
-        templateRows="50px"
-        templateAreas="
-          'header out'
-      "
         justifyContent="space-between"
+        backgroundColor="gray.800"
       >
         <Flex marginLeft={3} gridArea="header" mt={6}>
           <MenuDrawer />
           <Heading color="#fff" ml={2}>
-            Cadastrar evento
+            Novo evento
           </Heading>
         </Flex>
 
         <Flex gridArea="out" mt={6} marginRight={20}>
-          <Link href="/">
-            <Button
-              leftIcon={<ArrowBackIcon />}
-              backgroundColor="transparent"
-              color="#fff"
-              _hover={{ backgroundColor: 'transparent' }}
-            >
-              Sair
-            </Button>
-          </Link>
+          <Button
+            leftIcon={<ArrowBackIcon />}
+            backgroundColor="transparent"
+            color="#fff"
+            _hover={{ backgroundColor: 'transparent' }}
+          >
+            Sair
+          </Button>
         </Flex>
-      </Grid>
-
+      </Flex>
       <Grid
         as="main"
-        height="100vh"
-        templateColumns="1fr 700px 1fr"
-        templateRows="1fr 700px 1fr"
+        height="90vh"
+        backgroundColor="#fff"
+        templateColumns="550px"
+        templateRows="30px 1fr"
         templateAreas="
-          '. . . '
-          '. form .'
-          '. . .'
-      "
-        alignItems="center"
+         'menu'
+         'main'
+     "
         justifyContent="center"
-        padding="0 20px"
       >
         <Flex
-          gridArea="form"
-          height="100%"
+          gridArea="main"
+          marginBottom="15px"
           backgroundColor="gray.700"
           borderColor="gray.800"
           borderRadius="md"

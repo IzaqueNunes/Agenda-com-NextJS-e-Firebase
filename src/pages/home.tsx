@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { ArrowBackIcon } from '@chakra-ui/icons'
-import { FormHandles } from '@unform/core'
 
 import {
   Button,
@@ -40,7 +39,7 @@ import Link from 'next/link'
 
 import { TEvent } from '../types/TEvent'
 
-const HomePage: React.FC = () => {
+const HomePage = () => {
   const [events, setEvents] = useState<TEvent[]>()
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [loading, setLoading] = useState(false)
@@ -167,25 +166,34 @@ const HomePage: React.FC = () => {
   return (
     <Flex height="100vh" direction="column">
       <Grid
-        as="head"
-        height="10vh"
-        backgroundColor="gray.800"
-        templateColumns="200px 70px"
-        templateRows="50px"
+        as="main"
+        height="90vh"
+        backgroundColor="#fff"
+        templateColumns="1fr"
+        templateRows="30px 1fr"
         templateAreas="
-          'header out'
+          'menu'
+          'main'
       "
-        justifyContent="space-between"
+        justifyContent="flex-start"
+        alignItems="flex-start"
       >
-        <Flex marginLeft={3} gridArea="header" mt={6}>
-          <MenuDrawer />
-          <Heading color="#fff" ml={2}>
-            Eventos
-          </Heading>
-        </Flex>
+        <Flex
+          gridArea="menu"
+          display="flex"
+          width="100%"
+          height="10vh"
+          justifyContent="space-between"
+          backgroundColor="gray.800"
+        >
+          <Flex marginLeft={3} gridArea="header" mt={6}>
+            <MenuDrawer />
+            <Heading color="#fff" ml={2}>
+              Eventos
+            </Heading>
+          </Flex>
 
-        <Flex gridArea="out" mt={6} marginRight={20}>
-          <Link href="/">
+          <Flex gridArea="out" mt={6} marginRight={20}>
             <Button
               leftIcon={<ArrowBackIcon />}
               backgroundColor="transparent"
@@ -194,25 +202,15 @@ const HomePage: React.FC = () => {
             >
               Sair
             </Button>
-          </Link>
+          </Flex>
         </Flex>
-      </Grid>
-
-      <Grid
-        as="main"
-        height="90vh"
-        backgroundColor="#fff"
-        templateColumns="1fr"
-        templateRows="1fr"
-        templateAreas="
-          'main'
-      "
-        justifyContent="flex-start"
-        alignItems="flex-start"
-        padding="0 20px"
-      >
         {events?.length > 0 ? (
-          <Flex gridArea="main" direction="column" paddingBottom="20px">
+          <Flex
+            gridArea="main"
+            direction="column"
+            marginTop="50px"
+            padding="0 20px 20px 20px"
+          >
             {events?.map((item, index) => (
               <EventCard
                 key={index}
