@@ -1,4 +1,4 @@
-import { StarIcon } from '@chakra-ui/icons'
+import { DeleteIcon, EditIcon, StarIcon } from '@chakra-ui/icons'
 import { Badge, Box, Grid, Image } from '@chakra-ui/react'
 import React from 'react'
 
@@ -43,7 +43,7 @@ const EventCard: React.FC<EventCardProps> = props => {
           p={6}
           backgroundColor="gray.200"
         >
-          <Box display="flex" alignItems="baseline">
+          <Box display="flex" alignItems="center">
             <Badge borderRadius="full" px="2" colorScheme="teal">
               Recente
             </Badge>
@@ -56,6 +56,16 @@ const EventCard: React.FC<EventCardProps> = props => {
               ml="2"
             >
               {props.info1} &bull; {props.info2}
+            </Box>
+            <Box
+              display="flex"
+              color="gray.500"
+              gap={6}
+              position="absolute"
+              right={8}
+            >
+              <EditIcon cursor="pointer" />
+              <DeleteIcon cursor="pointer" />
             </Box>
           </Box>
 
