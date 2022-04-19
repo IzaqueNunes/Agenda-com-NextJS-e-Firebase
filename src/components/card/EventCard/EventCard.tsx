@@ -1,6 +1,6 @@
 import { DeleteIcon, EditIcon, StarIcon } from '@chakra-ui/icons'
-import { Badge, Box, Grid, Image } from '@chakra-ui/react'
 import React from 'react'
+import { Badge, Box, Grid, Image } from '@chakra-ui/react'
 
 interface EventCardProps {
   imageUrl: string
@@ -36,7 +36,12 @@ const EventCard: React.FC<EventCardProps> = props => {
         alignItems="center"
       >
         <Box gridArea="image">
-          <Image src={props.imageUrl} alt={props.imageAlt} />
+          <Image
+            src={props.imageUrl}
+            alt={props.imageAlt}
+            boxSize="auto"
+            objectFit="cover"
+          />
         </Box>
 
         <Box
