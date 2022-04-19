@@ -11,6 +11,8 @@ interface EventCardProps {
   description: string
   reviewCount: number
   rating: number
+  onClickDelete?: () => void
+  onClickUpdate?: () => void
 }
 
 const EventCard: React.FC<EventCardProps> = props => {
@@ -64,8 +66,8 @@ const EventCard: React.FC<EventCardProps> = props => {
               position="absolute"
               right={8}
             >
-              <EditIcon cursor="pointer" />
-              <DeleteIcon cursor="pointer" />
+              <EditIcon cursor="pointer" onClick={props.onClickUpdate} />
+              <DeleteIcon cursor="pointer" onClick={props.onClickDelete} />
             </Box>
           </Box>
 

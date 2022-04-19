@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { ArrowBackIcon } from '@chakra-ui/icons'
-import { Button, Flex, Grid, Heading } from '@chakra-ui/react'
+import { Button, Flex, Grid, Heading, useToast } from '@chakra-ui/react'
 import EventCard from '../components/card/EventCard/EventCard'
 import MenuDrawer from '../components/ui/drawer/MenuDrawer'
-import { database, ref, get, child } from '../services/firebase'
+import { database, ref, get, child, remove } from '../services/firebase'
 import Link from 'next/link'
 
 interface Event {
+  key: string
   title: string
   category: string
   date: string
@@ -19,6 +20,31 @@ interface Event {
 const HomePage: React.FC = () => {
   const [events, setEvents] = useState<Event[]>()
 
+  const toast = useToast()
+
+  // DELETE DATA
+  const handleDelete = (refToDelete: string) => {
+    remove(ref(database, `events/${refToDelete}`))
+      .then(() => {
+        location.reload()
+        toast({
+          position: 'top',
+          description: 'Evento deletado com sucesso',
+          status: 'success',
+          duration: 3000
+        })
+      })
+      .catch(() => {
+        toast({
+          position: 'top',
+          description: 'Houve um erro ao deletar o evento',
+          status: 'error',
+          duration: 3000
+        })
+      })
+  }
+
+  // READ DATA
   useEffect(() => {
     const dbRef = ref(database)
     get(child(dbRef, `events`))
@@ -39,7 +65,6 @@ const HomePage: React.FC = () => {
             }
           )
           setEvents(resultEvents)
-          console.log('RESULTADOS: ', resultEvents)
         } else {
           console.log('No data available')
         }
@@ -100,6 +125,7 @@ const HomePage: React.FC = () => {
           <Flex gridArea="main" direction="column" paddingBottom="20px">
             {events?.map(event => (
               <EventCard
+                key={event.key}
                 title={event.title}
                 imageUrl={event.imageUrl}
                 imageAlt={event.title}
@@ -108,6 +134,7 @@ const HomePage: React.FC = () => {
                 rating={4}
                 info1={event.date}
                 info2={event.local}
+                onClickDelete={() => handleDelete(event.key)}
               />
             ))}
           </Flex>

@@ -1,5 +1,5 @@
 import { initializeApp } from 'firebase/app'
-import { getDatabase, ref, set, get, child } from 'firebase/database'
+import { getDatabase, ref, set, get, child, remove } from 'firebase/database'
 import { getAuth } from 'firebase/auth'
 import {
   getStorage,
@@ -34,5 +34,6 @@ export {
   getDownloadURL,
   uploadBytesResumable,
   get,
-  child
+  child,
+  remove
 }
