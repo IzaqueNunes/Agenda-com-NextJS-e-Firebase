@@ -8,9 +8,14 @@ import {
   AvatarBadge,
   Box,
   Button,
+  Divider,
   Flex,
   Grid,
   Heading,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Popover,
   PopoverArrow,
   PopoverBody,
@@ -23,7 +28,7 @@ import {
 } from '@chakra-ui/react'
 import { PopoverTrigger } from '@chakra-ui/popover'
 import MenuDrawer from '../drawer/MenuDrawer'
-import { ArrowBackIcon } from '@chakra-ui/icons'
+import { ArrowBackIcon, ChevronDownIcon } from '@chakra-ui/icons'
 
 interface HeaderProps {
   title: string
@@ -83,31 +88,28 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
         </Flex>
 
         <Flex gridArea="out" pr={4} justifyContent="flex-end">
-          <Popover>
-            <PopoverTrigger>
+          <Menu>
+            <MenuButton>
               <Avatar size="sm" mr={2} cursor="pointer" name={user}>
                 <AvatarBadge boxSize="1.25em" bg="green.500" />
               </Avatar>
-            </PopoverTrigger>
-            <Portal>
-              <PopoverContent>
-                <PopoverArrow />
-                <PopoverHeader>Olá {user}</PopoverHeader>
-                <PopoverCloseButton />
-                <PopoverFooter>
-                  <Button
-                    padding={0}
-                    leftIcon={<ArrowBackIcon />}
-                    backgroundColor="transparent"
-                    _hover={{ backgroundColor: 'transparent' }}
-                    onClick={handleLogOut}
-                  >
-                    Sair
-                  </Button>
-                </PopoverFooter>
-              </PopoverContent>
-            </Portal>
-          </Popover>
+            </MenuButton>
+            <MenuList>
+              <MenuItem cursor="default">Olá {user}</MenuItem>
+              <Divider />
+              <MenuItem>
+                <Button
+                  padding={0}
+                  leftIcon={<ArrowBackIcon />}
+                  backgroundColor="transparent"
+                  _hover={{ backgroundColor: 'transparent' }}
+                  onClick={handleLogOut}
+                >
+                  Sair
+                </Button>
+              </MenuItem>
+            </MenuList>
+          </Menu>{' '}
         </Flex>
       </Grid>
     </Flex>
