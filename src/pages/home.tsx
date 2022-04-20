@@ -41,6 +41,7 @@ import {
 import Link from 'next/link'
 
 import { TEvent } from '../types/TEvent'
+import Header from '../components/ui/header/Header'
 
 const HomePage = () => {
   const [events, setEvents] = useState<TEvent[]>()
@@ -236,31 +237,8 @@ const HomePage = () => {
           justifyContent="flex-start"
           alignItems="flex-start"
         >
-          <Flex
-            gridArea="menu"
-            display="flex"
-            width="100%"
-            height="10vh"
-            justifyContent="space-between"
-            backgroundColor="gray.800"
-          >
-            <Flex marginLeft={3} gridArea="header" mt={6}>
-              <MenuDrawer />
-              <Heading color="#fff" ml={2}>
-                Eventos
-              </Heading>
-            </Flex>
-
-            <Flex gridArea="out" mt={6} marginRight={20}>
-              <Button
-                leftIcon={<ArrowBackIcon />}
-                backgroundColor="transparent"
-                color="#fff"
-                _hover={{ backgroundColor: 'transparent' }}
-              >
-                Sair
-              </Button>
-            </Flex>
+          <Flex gridArea="menu">
+            <Header title="Eventos" />
           </Flex>
           {events?.length > 0 ? (
             <Flex

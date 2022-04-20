@@ -24,6 +24,7 @@ import {
 } from '@chakra-ui/react'
 import Link from 'next/link'
 import MenuDrawer from '../components/ui/drawer/MenuDrawer'
+import Header from '../components/ui/header/Header'
 
 const NewEvent: React.FC = () => {
   const toast = useToast()
@@ -75,31 +76,8 @@ const NewEvent: React.FC = () => {
 
   return (
     <Flex height="100vh" direction="column">
-      <Flex
-        gridArea="menu"
-        display="flex"
-        width="100%"
-        height="10vh"
-        justifyContent="space-between"
-        backgroundColor="gray.800"
-      >
-        <Flex marginLeft={3} gridArea="header" mt={6}>
-          <MenuDrawer />
-          <Heading color="#fff" ml={2}>
-            Novo evento
-          </Heading>
-        </Flex>
-
-        <Flex gridArea="out" mt={6} marginRight={20}>
-          <Button
-            leftIcon={<ArrowBackIcon />}
-            backgroundColor="transparent"
-            color="#fff"
-            _hover={{ backgroundColor: 'transparent' }}
-          >
-            Sair
-          </Button>
-        </Flex>
+      <Flex gridArea="menu">
+        <Header title="Novo evento" />
       </Flex>
       <Grid
         as="main"
