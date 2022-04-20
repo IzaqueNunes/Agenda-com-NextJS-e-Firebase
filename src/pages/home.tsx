@@ -1,5 +1,10 @@
-import React, { useContext, useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
 
+import EventCard from '../components/card/EventCard/EventCard'
+import Header from '../components/ui/header/Header'
+import { TEvent } from '../types/TEvent'
+import { AuthContext } from '../contexts/AuthContext'
 import {
   Button,
   Editable,
@@ -18,13 +23,10 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Skeleton,
   Spinner,
-  Stack,
   useDisclosure,
   useToast
 } from '@chakra-ui/react'
-import EventCard from '../components/card/EventCard/EventCard'
 import {
   database,
   ref,
@@ -38,11 +40,6 @@ import {
   getDownloadURL
 } from '../services/firebase'
 
-import { TEvent } from '../types/TEvent'
-import Header from '../components/ui/header/Header'
-import { AuthContext } from '../contexts/AuthContext'
-import { useRouter } from 'next/router'
-
 const HomePage = () => {
   const [events, setEvents] = useState<TEvent[]>()
   const { isOpen, onOpen, onClose } = useDisclosure()
@@ -55,9 +52,10 @@ const HomePage = () => {
   const [ticket, setTicket] = useState('')
   const [category, setCategory] = useState('')
   const [date, setDate] = useState('')
+  const [log, setLog] = useState(true)
   const router = useRouter()
 
-  const { isSignedIn, isPageLoading, setIsPageLoading } =
+  const { isSignedIn, isPageLoading, setIsPageLoading, setIsSignedIn, user } =
     useContext(AuthContext)
 
   const [id, setId] = useState('')
@@ -213,11 +211,10 @@ const HomePage = () => {
 
   useEffect(() => {
     setIsPageLoading(true)
+    setIsPageLoading(false)
+    readData()
     if (!isSignedIn) {
       router.push('/')
-    } else {
-      setIsPageLoading(false)
-      readData()
     }
   }, [])
 

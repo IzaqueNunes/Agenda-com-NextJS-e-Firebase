@@ -27,7 +27,8 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const { setIsSignedIn, setIsPageLoading } = useContext(AuthContext)
+  const { setIsSignedIn, setIsPageLoading, setUser, isSignedIn } =
+    useContext(AuthContext)
 
   const router = useRouter()
 
@@ -40,7 +41,14 @@ const Login: React.FC = () => {
       .then(userCredential => {
         // Signed in
         const user = userCredential.user
+        setUser(user.email)
         setIsSignedIn(true)
+        toast({
+          position: 'top',
+          description: `Bem vindo ${user.email}!`,
+          status: 'success',
+          duration: 3000
+        })
         setTimeout(() => {
           router.push('/home')
           setLoading(false)
@@ -60,6 +68,7 @@ const Login: React.FC = () => {
         const errorCode = error.code
         const errorMessage = error.message
       })
+    console.log('LOGOU: ', isSignedIn)
   }
 
   return (
