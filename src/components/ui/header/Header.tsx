@@ -1,6 +1,8 @@
-import { ArrowBackIcon } from '@chakra-ui/icons'
-import { Button, Flex, Grid, Heading } from '@chakra-ui/react'
 import React from 'react'
+import { useRouter } from 'next/router'
+import { auth, signOut } from '../../../services/firebase'
+import { ArrowBackIcon } from '@chakra-ui/icons'
+import { Button, Flex, Grid, Heading, useToast } from '@chakra-ui/react'
 import MenuDrawer from '../drawer/MenuDrawer'
 
 interface HeaderProps {
@@ -8,6 +10,32 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ title }) => {
+  const router = useRouter()
+  const toast = useToast()
+
+  const handleLogOut = () => {
+    signOut(auth)
+      .then(() => {
+        toast({
+          position: 'top',
+          description: 'Você foi deslogado com sucesso',
+          status: 'success',
+          duration: 3000
+        })
+        setTimeout(() => {
+          router.push('/')
+        }, 3000)
+      })
+      .catch(error => {
+        toast({
+          position: 'top',
+          description: 'Houve um erro ao deslogar',
+          status: 'error',
+          duration: 3000
+        })
+      })
+  }
+
   return (
     <Flex
       width="100%"
@@ -38,6 +66,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
             backgroundColor="transparent"
             color="#fff"
             _hover={{ backgroundColor: 'transparent' }}
+            onClick={handleLogOut}
           >
             Sair
           </Button>

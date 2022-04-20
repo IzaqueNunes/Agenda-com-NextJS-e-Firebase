@@ -1,4 +1,5 @@
 import { initializeApp } from 'firebase/app'
+import { getAuth, signOut } from 'firebase/auth'
 import {
   getDatabase,
   ref,
@@ -8,7 +9,6 @@ import {
   remove,
   update
 } from 'firebase/database'
-import { getAuth } from 'firebase/auth'
 import {
   getStorage,
   uploadBytes,
@@ -33,6 +33,7 @@ const storage = getStorage(app)
 
 export {
   auth,
+  signOut,
   database,
   ref,
   set,
