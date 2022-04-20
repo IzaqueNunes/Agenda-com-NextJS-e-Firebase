@@ -6,7 +6,7 @@ import React, {
 } from 'react'
 
 interface Props {
-  children: ReactNode
+  children: React.ReactNode
 }
 
 interface IAuth {
@@ -16,8 +16,8 @@ interface IAuth {
   isPageLoading: boolean
   setIsPageLoading: React.Dispatch<SetStateAction<boolean>>
 
-  email: string
-  setEmail: React.Dispatch<SetStateAction<string>>
+  user: string
+  setUser: React.Dispatch<SetStateAction<string>>
 
   userId: string
   setUserId: React.Dispatch<SetStateAction<string>>
@@ -30,17 +30,17 @@ export const AuthContext = createContext<IAuth>({
   isPageLoading: true,
   setIsPageLoading: () => null,
 
-  email: '',
-  setEmail: () => null,
+  user: '',
+  setUser: () => null,
 
   userId: '',
   setUserId: () => null
 })
 
-const AuthProvider: React.FC<Props> = ({ children }) => {
+export const AuthProvider: React.FC<Props> = ({ children }) => {
   const [isSignedIn, setIsSignedIn] = useState(false)
-  const [isPageLoading, setIsPageLoading] = useState(true)
-  const [email, setEmail] = useState('')
+  const [isPageLoading, setIsPageLoading] = useState(false)
+  const [user, setUser] = useState('')
   const [userId, setUserId] = useState('')
 
   return (
@@ -50,8 +50,8 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
         setIsSignedIn,
         isPageLoading,
         setIsPageLoading,
-        email,
-        setEmail,
+        user,
+        setUser,
         userId,
         setUserId
       }}
@@ -60,4 +60,5 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
     </AuthContext.Provider>
   )
 }
-export default AuthProvider
+
+export default AuthContext

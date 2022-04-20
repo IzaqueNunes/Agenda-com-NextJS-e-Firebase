@@ -215,10 +215,9 @@ const HomePage = () => {
     setIsPageLoading(true)
     if (!isSignedIn) {
       router.push('/')
-    } else {
-      setIsPageLoading(false)
-      readData()
     }
+    setIsPageLoading(false)
+    readData()
   }, [])
 
   return (

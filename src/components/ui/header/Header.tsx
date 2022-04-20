@@ -3,16 +3,34 @@ import { useRouter } from 'next/router'
 import { AuthContext } from '../../../contexts/AuthContext'
 import { auth, signOut } from '../../../services/firebase'
 
-import { ArrowBackIcon } from '@chakra-ui/icons'
-import { Button, Flex, Grid, Heading, useToast } from '@chakra-ui/react'
+import {
+  Avatar,
+  AvatarBadge,
+  Box,
+  Button,
+  Flex,
+  Grid,
+  Heading,
+  Popover,
+  PopoverArrow,
+  PopoverBody,
+  PopoverCloseButton,
+  PopoverContent,
+  PopoverFooter,
+  PopoverHeader,
+  Portal,
+  useToast
+} from '@chakra-ui/react'
+import { PopoverTrigger } from '@chakra-ui/popover'
 import MenuDrawer from '../drawer/MenuDrawer'
+import { ArrowBackIcon } from '@chakra-ui/icons'
 
 interface HeaderProps {
   title: string
 }
 
 const Header: React.FC<HeaderProps> = ({ title }) => {
-  const { setIsSignedIn } = useContext(AuthContext)
+  const { setIsSignedIn, user } = useContext(AuthContext)
   const router = useRouter()
   const toast = useToast()
 
@@ -33,7 +51,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
       .catch(error => {
         toast({
           position: 'top',
-          description: 'Houve um erro ao deslogar',
+          description: error.message,
           status: 'error',
           duration: 3000
         })
@@ -65,15 +83,31 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
         </Flex>
 
         <Flex gridArea="out" pr={4} justifyContent="flex-end">
-          <Button
-            leftIcon={<ArrowBackIcon />}
-            backgroundColor="transparent"
-            color="#fff"
-            _hover={{ backgroundColor: 'transparent' }}
-            onClick={handleLogOut}
-          >
-            Sair
-          </Button>
+          <Popover>
+            <PopoverTrigger>
+              <Avatar size="sm" mr={2} cursor="pointer">
+                <AvatarBadge boxSize="1.25em" bg="green.500" />
+              </Avatar>
+            </PopoverTrigger>
+            <Portal>
+              <PopoverContent>
+                <PopoverArrow />
+                <PopoverHeader>Olá {user}</PopoverHeader>
+                <PopoverCloseButton />
+                <PopoverFooter>
+                  <Button
+                    padding={0}
+                    leftIcon={<ArrowBackIcon />}
+                    backgroundColor="transparent"
+                    _hover={{ backgroundColor: 'transparent' }}
+                    onClick={handleLogOut}
+                  >
+                    Sair
+                  </Button>
+                </PopoverFooter>
+              </PopoverContent>
+            </Portal>
+          </Popover>
         </Flex>
       </Grid>
     </Flex>
