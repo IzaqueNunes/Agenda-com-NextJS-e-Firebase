@@ -1,9 +1,11 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { useRouter } from 'next/router'
 import { signInWithEmailAndPassword } from 'firebase/auth'
 import { auth } from '../services/firebase'
 import { IoLogoGithub } from 'react-icons/io'
 import { EmailIcon, LockIcon } from '@chakra-ui/icons'
+
+import { AuthContext } from '../contexts/AuthContext'
 
 import {
   Button,
@@ -21,21 +23,24 @@ import {
 } from '@chakra-ui/react'
 
 const Login: React.FC = () => {
-  const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
+
+  const { setIsSignedIn, setIsPageLoading } = useContext(AuthContext)
 
   const router = useRouter()
 
   const toast = useToast()
 
   const login = () => {
+    setIsPageLoading(true)
     setLoading(true)
     signInWithEmailAndPassword(auth, email, password)
       .then(userCredential => {
         // Signed in
         const user = userCredential.user
-
+        setIsSignedIn(true)
         setTimeout(() => {
           router.push('/home')
           setLoading(false)
@@ -44,6 +49,7 @@ const Login: React.FC = () => {
       })
       .catch(error => {
         setLoading(false)
+        setIsSignedIn(false)
 
         toast({
           position: 'top',

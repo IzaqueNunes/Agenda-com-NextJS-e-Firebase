@@ -1,6 +1,8 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { useRouter } from 'next/router'
+import { AuthContext } from '../../../contexts/AuthContext'
 import { auth, signOut } from '../../../services/firebase'
+
 import { ArrowBackIcon } from '@chakra-ui/icons'
 import { Button, Flex, Grid, Heading, useToast } from '@chakra-ui/react'
 import MenuDrawer from '../drawer/MenuDrawer'
@@ -10,12 +12,14 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ title }) => {
+  const { setIsSignedIn } = useContext(AuthContext)
   const router = useRouter()
   const toast = useToast()
 
   const handleLogOut = () => {
     signOut(auth)
       .then(() => {
+        setIsSignedIn(false)
         toast({
           position: 'top',
           description: 'Você foi deslogado com sucesso',

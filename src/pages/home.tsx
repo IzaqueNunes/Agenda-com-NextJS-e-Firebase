@@ -1,5 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { ArrowBackIcon } from '@chakra-ui/icons'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 
 import {
   Button,
@@ -20,12 +19,12 @@ import {
   ModalHeader,
   ModalOverlay,
   Skeleton,
+  Spinner,
   Stack,
   useDisclosure,
   useToast
 } from '@chakra-ui/react'
 import EventCard from '../components/card/EventCard/EventCard'
-import MenuDrawer from '../components/ui/drawer/MenuDrawer'
 import {
   database,
   ref,
@@ -38,10 +37,11 @@ import {
   uploadBytes,
   getDownloadURL
 } from '../services/firebase'
-import Link from 'next/link'
 
 import { TEvent } from '../types/TEvent'
 import Header from '../components/ui/header/Header'
+import { AuthContext } from '../contexts/AuthContext'
+import { useRouter } from 'next/router'
 
 const HomePage = () => {
   const [events, setEvents] = useState<TEvent[]>()
@@ -55,7 +55,10 @@ const HomePage = () => {
   const [ticket, setTicket] = useState('')
   const [category, setCategory] = useState('')
   const [date, setDate] = useState('')
-  const [loadingPage, setLoadingPage] = useState(false)
+  const router = useRouter()
+
+  const { isSignedIn, isPageLoading, setIsPageLoading } =
+    useContext(AuthContext)
 
   const [id, setId] = useState('')
 
@@ -175,7 +178,7 @@ const HomePage = () => {
 
   // READ DATA
   const readData = () => {
-    setLoadingPage(true)
+    setIsPageLoading(true)
     const dbRef = ref(database)
     get(child(dbRef, `events`))
       .then(snapshot => {
@@ -195,34 +198,47 @@ const HomePage = () => {
             }
           )
           setEvents(resultEvents)
-          setLoadingPage(false)
+          setIsPageLoading(false)
         } else {
-          setLoadingPage(false)
+          setIsPageLoading(false)
           console.log('No data available')
         }
       })
       .catch(error => {
-        setLoadingPage(false)
+        setIsPageLoading(false)
 
         console.error(error)
       })
   }
 
   useEffect(() => {
-    readData()
+    setIsPageLoading(true)
+    if (!isSignedIn) {
+      router.push('/')
+    } else {
+      setIsPageLoading(false)
+      readData()
+    }
   }, [])
 
   return (
     <Flex height="100vh" direction="column">
-      {loadingPage ? (
-        <Stack width="100%" height="100vh" marginTop="100px">
-          <Skeleton height="200px" />
-          <Skeleton height="200px" />
-          <Skeleton height="200px" />
-          <Skeleton height="200px" />
-          <Skeleton height="200px" />
-          <Skeleton height="200px" />
-        </Stack>
+      {isPageLoading ? (
+        <Flex
+          width="100%"
+          height="100%"
+          display="flex"
+          alignItems="center"
+          justifyContent="center"
+        >
+          <Spinner
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="blue.500"
+            size="xs"
+          />
+        </Flex>
       ) : (
         <Grid
           as="main"
