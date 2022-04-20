@@ -273,12 +273,22 @@ const HomePage = () => {
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent backgroundColor="gray.800">
+        <ModalContent backgroundColor="gray.700">
           <ModalHeader color="gray.100">Editar evento</ModalHeader>
           <ModalCloseButton color="gray.100" />
 
           <ModalBody display="flex" pb={6} flexDirection="column" gap={5}>
-            <Img src={imageUrl} />
+            <Img
+              src={imageUrl}
+              border="1px"
+              borderColor="purple.500"
+              borderRadius="8px"
+              padding={2}
+            />
+            <Heading size="sm" color="#fff">
+              {' '}
+              Escolha uma imagem:{' '}
+            </Heading>
             <Input
               height="50px"
               backgroundColor="gray.800"
@@ -289,45 +299,96 @@ const HomePage = () => {
               type="file"
               onChange={e => setImage(e.currentTarget.files[0])}
             />
-            <Editable defaultValue={title} color="#fff">
+            <Editable
+              defaultValue={title}
+              color="#fff"
+              backgroundColor="gray.800"
+              borderRadius="8px"
+              height="50px"
+              display="flex"
+              alignItems="center"
+            >
               <EditablePreview />
               <EditableInput
                 height="50px"
+                _focus={{ border: '1px', borderColor: 'purple.500' }}
                 onChange={e => setTitle(e.currentTarget.value)}
               />
             </Editable>
-            <Editable defaultValue={description} color="#fff">
+            <Editable
+              defaultValue={description}
+              color="#fff"
+              backgroundColor="gray.800"
+              borderRadius="8px"
+            >
               <EditablePreview />
               <EditableTextarea
                 height="150px"
+                _focus={{ border: '1px', borderColor: 'purple.500' }}
                 onChange={e => setDescription(e.currentTarget.value)}
               />
             </Editable>
-            <Editable defaultValue={local} color="#fff">
+            <Editable
+              defaultValue={local}
+              color="#fff"
+              backgroundColor="gray.800"
+              borderRadius="8px"
+              height="50px"
+              display="flex"
+              alignItems="center"
+            >
               <EditablePreview />
               <EditableInput
                 height="50px"
+                _focus={{ border: '1px', borderColor: 'purple.500' }}
                 onChange={e => setLocal(e.currentTarget.value)}
               />
             </Editable>
-            <Editable defaultValue={ticket} color="#fff">
+            <Editable
+              defaultValue={ticket}
+              color="#fff"
+              backgroundColor="gray.800"
+              borderRadius="8px"
+              height="50px"
+              display="flex"
+              alignItems="center"
+            >
               <EditablePreview />
               <EditableInput
                 height="50px"
+                _focus={{ border: '1px', borderColor: 'purple.500' }}
                 onChange={e => setTicket(e.currentTarget.value)}
               />
             </Editable>
-            <Editable defaultValue={date} color="#fff">
+            <Editable
+              defaultValue={date}
+              color="#fff"
+              backgroundColor="gray.800"
+              borderRadius="8px"
+              height="50px"
+              display="flex"
+              alignItems="center"
+            >
               <EditablePreview />
               <EditableInput
                 height="50px"
+                _focus={{ border: '1px', borderColor: 'purple.500' }}
                 onChange={e => setDate(e.currentTarget.value)}
               />
             </Editable>
-            <Editable defaultValue={category} color="#fff">
+            <Editable
+              defaultValue={category}
+              color="#fff"
+              backgroundColor="gray.800"
+              borderRadius="8px"
+              height="50px"
+              display="flex"
+              alignItems="center"
+            >
               <EditablePreview />
               <EditableInput
                 height="50px"
+                _focus={{ border: '1px', borderColor: 'purple.500' }}
                 onChange={e => setCategory(e.currentTarget.value)}
               />
             </Editable>

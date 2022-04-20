@@ -152,6 +152,10 @@ const NewEvent: React.FC = () => {
             placeholder="Ingresso"
             onChange={e => setTicket(e.currentTarget.value)}
           />
+          <Heading size="sm" color="#fff">
+            {' '}
+            Escolha uma imagem:{' '}
+          </Heading>
           <Input
             height="50px"
             backgroundColor="gray.800"
@@ -162,6 +166,7 @@ const NewEvent: React.FC = () => {
             type="file"
             onChange={e => setImage(e.currentTarget.files[0])}
           />
+
           <Textarea
             placeholder="Descrição"
             size="sm"
