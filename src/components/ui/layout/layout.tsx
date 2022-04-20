@@ -5,6 +5,7 @@ import Header from '../header/Header'
 interface HeaderProps {
   title: string
   children: React.ReactNode
+  icon?: string
 }
 
 const Layout: React.FC<HeaderProps> = ({ title, children }) => {
