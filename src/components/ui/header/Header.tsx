@@ -85,7 +85,7 @@ const Header: React.FC<HeaderProps> = ({ title }) => {
         <Flex gridArea="out" pr={4} justifyContent="flex-end">
           <Popover>
             <PopoverTrigger>
-              <Avatar size="sm" mr={2} cursor="pointer">
+              <Avatar size="sm" mr={2} cursor="pointer" name={user}>
                 <AvatarBadge boxSize="1.25em" bg="green.500" />
               </Avatar>
             </PopoverTrigger>

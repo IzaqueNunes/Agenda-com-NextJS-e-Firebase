@@ -27,7 +27,7 @@ const Login: React.FC = () => {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
 
-  const { setIsSignedIn, setIsPageLoading, setUser, setUserId } =
+  const { setIsSignedIn, setIsPageLoading, setUser, isSignedIn } =
     useContext(AuthContext)
 
   const router = useRouter()
@@ -68,6 +68,7 @@ const Login: React.FC = () => {
         const errorCode = error.code
         const errorMessage = error.message
       })
+    console.log('LOGOU: ', isSignedIn)
   }
 
   return (

@@ -1,9 +1,4 @@
-import React, {
-  createContext,
-  ReactNode,
-  SetStateAction,
-  useState
-} from 'react'
+import React, { createContext, SetStateAction, useState } from 'react'
 
 interface Props {
   children: React.ReactNode
@@ -37,7 +32,7 @@ export const AuthContext = createContext<IAuth>({
   setUserId: () => null
 })
 
-export const AuthProvider: React.FC<Props> = ({ children }) => {
+const AuthProvider: React.FC<Props> = ({ children }) => {
   const [isSignedIn, setIsSignedIn] = useState(false)
   const [isPageLoading, setIsPageLoading] = useState(false)
   const [user, setUser] = useState('')
@@ -61,4 +56,4 @@ export const AuthProvider: React.FC<Props> = ({ children }) => {
   )
 }
 
-export default AuthContext
+export default AuthProvider

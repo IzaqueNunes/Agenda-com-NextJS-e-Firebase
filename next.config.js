@@ -4,4 +4,16 @@ const nextConfig = {
   strictMode: true
 }
 
-module.exports = nextConfig
+module.exports = {
+  nextConfig,
+
+  async redirects() {
+    return [
+      {
+        source: '/home',
+        destination: '/',
+        permanent: false,
+      },
+    ]
+  },
+}
