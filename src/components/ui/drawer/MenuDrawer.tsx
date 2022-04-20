@@ -34,7 +34,7 @@ const MenuDrawer = () => {
         <DrawerOverlay />
         <DrawerContent backgroundColor="gray.800" color="#fff">
           <DrawerHeader borderBottomWidth="1px">Menu</DrawerHeader>
-          <DrawerBody gap={20}>
+          <DrawerBody display="flex" flexDirection="column" gap={8} mt={8}>
             <p>
               <Link href="/home">Página inicial</Link>
             </p>

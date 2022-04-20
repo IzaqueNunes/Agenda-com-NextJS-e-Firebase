@@ -6,6 +6,7 @@ import {
   Editable,
   EditableInput,
   EditablePreview,
+  EditableTextarea,
   Flex,
   Grid,
   Heading,
@@ -18,6 +19,8 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
+  Skeleton,
+  Stack,
   useDisclosure,
   useToast
 } from '@chakra-ui/react'
@@ -51,6 +54,7 @@ const HomePage = () => {
   const [ticket, setTicket] = useState('')
   const [category, setCategory] = useState('')
   const [date, setDate] = useState('')
+  const [loadingPage, setLoadingPage] = useState(false)
 
   const [id, setId] = useState('')
 
@@ -71,45 +75,79 @@ const HomePage = () => {
 
   // UPDATE DATA
   const handleUpdate = () => {
-    const storageRefPath = refStorage(storage, `/files/${image.name}`)
-    uploadBytes(storageRefPath, image).then(snapshot => {
-      getDownloadURL(storageRefPath).then(downloadURL => {
-        setImageUrl(downloadURL)
-        const dados = {
-          category: category,
-          date: date,
-          description: description,
-          local: local,
-          ticket: ticket,
-          title: title,
-          imageUrl: downloadURL
-        }
-        return update(ref(database, 'events/' + id), dados)
-          .then(() => {
-            setLoading(true)
-            toast({
-              position: 'top',
-              description: 'Evento atualizado com sucesso',
-              status: 'success',
-              duration: 3000
+    if (image) {
+      const storageRefPath = refStorage(storage, `/files/${image.name}`)
+      uploadBytes(storageRefPath, image).then(snapshot => {
+        getDownloadURL(storageRefPath).then(downloadURL => {
+          setImageUrl(downloadURL)
+          const dados = {
+            category: category,
+            date: date,
+            description: description,
+            local: local,
+            ticket: ticket,
+            title: title,
+            imageUrl: downloadURL
+          }
+          return update(ref(database, 'events/' + id), dados)
+            .then(() => {
+              setLoading(true)
+              toast({
+                position: 'top',
+                description: 'Evento atualizado com sucesso',
+                status: 'success',
+                duration: 3000
+              })
+              setTimeout(() => {
+                onClose()
+                location.reload()
+                setLoading(false)
+              }, 3000)
             })
-            setTimeout(() => {
-              onClose()
-              location.reload()
-              setLoading(false)
-            }, 3000)
-          })
-          .catch(error => {
-            toast({
-              position: 'top',
-              description: error.message,
-              status: 'error',
-              duration: 3000
+            .catch(error => {
+              toast({
+                position: 'top',
+                description: error.message,
+                status: 'error',
+                duration: 3000
+              })
             })
-          })
+        })
+        console.log('Uploaded a blob or file!')
       })
-      console.log('Uploaded a blob or file!')
-    })
+    } else {
+      const dados = {
+        category: category,
+        date: date,
+        description: description,
+        local: local,
+        ticket: ticket,
+        title: title
+      }
+      return update(ref(database, 'events/' + id), dados)
+        .then(() => {
+          setLoading(true)
+          toast({
+            position: 'top',
+            description: 'Evento atualizado com sucesso',
+            status: 'success',
+            duration: 3000
+          })
+          setTimeout(() => {
+            onClose()
+            location.reload()
+            setLoading(false)
+          }, 3000)
+        })
+        .catch(error => {
+          toast({
+            position: 'top',
+            description: error.message,
+            status: 'error',
+            duration: 3000
+          })
+        })
+    }
   }
 
   // DELETE DATA
@@ -135,7 +173,8 @@ const HomePage = () => {
   }
 
   // READ DATA
-  useEffect(() => {
+  const readData = () => {
+    setLoadingPage(true)
     const dbRef = ref(database)
     get(child(dbRef, `events`))
       .then(snapshot => {
@@ -155,85 +194,104 @@ const HomePage = () => {
             }
           )
           setEvents(resultEvents)
+          setLoadingPage(false)
         } else {
+          setLoadingPage(false)
           console.log('No data available')
         }
       })
       .catch(error => {
+        setLoadingPage(false)
+
         console.error(error)
       })
+  }
+
+  useEffect(() => {
+    readData()
   }, [])
 
   return (
     <Flex height="100vh" direction="column">
-      <Grid
-        as="main"
-        height="90vh"
-        backgroundColor="#fff"
-        templateColumns="1fr"
-        templateRows="30px 1fr"
-        templateAreas="
+      {loadingPage ? (
+        <Stack width="100%" height="100vh" marginTop="100px">
+          <Skeleton height="200px" />
+          <Skeleton height="200px" />
+          <Skeleton height="200px" />
+          <Skeleton height="200px" />
+          <Skeleton height="200px" />
+          <Skeleton height="200px" />
+        </Stack>
+      ) : (
+        <Grid
+          as="main"
+          height="90vh"
+          backgroundColor="#fff"
+          templateColumns="1fr"
+          templateRows="30px 1fr"
+          templateAreas="
           'menu'
           'main'
       "
-        justifyContent="flex-start"
-        alignItems="flex-start"
-      >
-        <Flex
-          gridArea="menu"
-          display="flex"
-          width="100%"
-          height="10vh"
-          justifyContent="space-between"
-          backgroundColor="gray.800"
+          justifyContent="flex-start"
+          alignItems="flex-start"
         >
-          <Flex marginLeft={3} gridArea="header" mt={6}>
-            <MenuDrawer />
-            <Heading color="#fff" ml={2}>
-              Eventos
-            </Heading>
-          </Flex>
-
-          <Flex gridArea="out" mt={6} marginRight={20}>
-            <Button
-              leftIcon={<ArrowBackIcon />}
-              backgroundColor="transparent"
-              color="#fff"
-              _hover={{ backgroundColor: 'transparent' }}
-            >
-              Sair
-            </Button>
-          </Flex>
-        </Flex>
-        {events?.length > 0 ? (
           <Flex
-            gridArea="main"
-            direction="column"
-            marginTop="50px"
-            padding="0 20px 20px 20px"
+            gridArea="menu"
+            display="flex"
+            width="100%"
+            height="10vh"
+            justifyContent="space-between"
+            backgroundColor="gray.800"
           >
-            {events?.map((item, index) => (
-              <EventCard
-                key={index}
-                title={item.title}
-                imageUrl={item.imageUrl}
-                imageAlt={item.title}
-                description={item.description}
-                reviewCount={34}
-                rating={4}
-                info1={item.date}
-                info2={item.local}
-                onClickDelete={() => handleDelete(item.key)}
-                onClickUpdate={() => updateFill(item)}
-              />
-            ))}
+            <Flex marginLeft={3} gridArea="header" mt={6}>
+              <MenuDrawer />
+              <Heading color="#fff" ml={2}>
+                Eventos
+              </Heading>
+            </Flex>
+
+            <Flex gridArea="out" mt={6} marginRight={20}>
+              <Button
+                leftIcon={<ArrowBackIcon />}
+                backgroundColor="transparent"
+                color="#fff"
+                _hover={{ backgroundColor: 'transparent' }}
+              >
+                Sair
+              </Button>
+            </Flex>
           </Flex>
-        ) : (
-          <Heading alignSelf="center" justifySelf="center">
-            Sem eventos cadastrados
-          </Heading>
-        )}
-      </Grid>
+          {events?.length > 0 ? (
+            <Flex
+              gridArea="main"
+              direction="column"
+              marginTop="50px"
+              padding="0 20px 20px 20px"
+            >
+              {events?.map((item, index) => (
+                <EventCard
+                  key={index}
+                  title={item.title}
+                  imageUrl={item.imageUrl}
+                  imageAlt={item.title}
+                  description={item.description}
+                  reviewCount={34}
+                  rating={4}
+                  info1={item.date}
+                  info2={item.local}
+                  onClickDelete={() => handleDelete(item.key)}
+                  onClickUpdate={() => updateFill(item)}
+                />
+              ))}
+            </Flex>
+          ) : (
+            <Heading alignSelf="center" justifySelf="center">
+              Sem eventos cadastrados
+            </Heading>
+          )}
+        </Grid>
+      )}
 
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
@@ -262,8 +320,8 @@ const HomePage = () => {
             </Editable>
             <Editable defaultValue={description} color="#fff">
               <EditablePreview />
-              <EditableInput
-                height="50px"
+              <EditableTextarea
+                height="150px"
                 onChange={e => setDescription(e.currentTarget.value)}
               />
             </Editable>
